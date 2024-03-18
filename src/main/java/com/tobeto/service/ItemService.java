@@ -14,11 +14,21 @@ public class ItemService {
 	@Autowired
 	private ItemRepository itemRepository;
 
-	public Item addItem(Item item) {
-		return itemRepository.save(item);
+	@Autowired
+	private ShelfService shelfService;
+
+	public Item addItem(Item item, int total) {
+		itemRepository.save(item);
+		shelfService.saveShelf(item, total);
+
+		return item;
 	}
 
 	public List<Item> getItems() {
 		return itemRepository.findAll();
+	}
+
+	public Item getItem(int id) {
+		return itemRepository.findById(id).get();
 	}
 }
