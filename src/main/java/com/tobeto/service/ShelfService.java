@@ -1,12 +1,11 @@
 package com.tobeto.service;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.tobeto.entity.Item;
 import com.tobeto.entity.Shelf;
 import com.tobeto.repository.ShelfRepository;
 
@@ -17,8 +16,14 @@ public class ShelfService {
 	private ShelfRepository shelfRepository;
 
 	public int addShelf(int count) {
-		if (count > 50) {
-			count = 50;
+		int shelfCount = (int) shelfRepository.count();
+		int maxShelf = 10;
+		if (maxShelf < shelfCount + count) {
+			// count 40
+			// max 50
+			// scount 20
+			count = maxShelf - shelfCount;
+			// 0 döndüğünde exception olacak (max kapasiteye ulaşıldı gibi)
 		}
 		for (int i = 0; i < count; i++) {
 			if (shelfRepository.findAll().get(getNumbers() - 1)
@@ -29,16 +34,24 @@ public class ShelfService {
 				shelfRepository.save(shelf);
 			}
 		}
+
 		return count;
 	}
 
+	public void saveShelf(Shelf shelf) {
+		shelfRepository.save(shelf);
+	}
+
 	public List<Shelf> getShelves() {
-		// System.out.println(getNumbers());
 		return shelfRepository.findAll();
 	}
 
-	public int getNumbers() {
+	public Shelf getEmptyShelf() {
+		// İçinde item olmayan shelf return ediyor
+		return getShelves().stream().filter(shelf -> shelf.getItem() == null).findFirst().get();
+	}
 
+	public int getNumbers() {
 		return shelfRepository.findAll().size();
 
 //		List<Integer> list = new ArrayList<>();
@@ -52,43 +65,39 @@ public class ShelfService {
 //		return list;
 	}
 
-	public void deleteShelf(int no) {
-		Shelf shelf = shelfRepository.findByNo(no).orElseThrow();
-		shelfRepository.delete(shelf);
-	}
+	public void deleteShelf(int id) {
+		Optional<Shelf> shelf = shelfRepository.findById(id);
+		if (shelf.isPresent()) {
+			shelfRepository.delete(shelf.get());
 
-	// İçinde item olmayan shelf return ediyor
-	public Shelf getEmptyShelf() {
-		return getShelves().stream().filter(shelf -> shelf.getItem_quantity() == 0).findFirst().get();
-	}
-
-	public List<Shelf> getShelfWithItem(int id) {
-		System.out.println("id==>" + id);
-		List<Shelf> list = new ArrayList<Shelf>();
-		getShelves().stream().forEach(s -> {
-			if (s.getItem().getId() == id && s.getItem_quantity() < s.getCapacity()) {
-				list.add(s);
-				System.out.println("list add");
-			} else {
-				System.out.println("Boş shelf bulunamadı");
-			}
-		});
-		return list;
-	}
-
-	public void saveShelf(Item item, int total) {
-
-		if (getShelfWithItem(item.getId()).isEmpty()) {
-			Shelf shelf = new Shelf();
-			while (total != 0) {
-				shelf.setItem(item);
-				shelf.setCapacity(5);
-				shelf.setItem_quantity(5);
-				total -= 5;
-				shelfRepository.save(shelf);
-			}
+		} else {
+			// exception
 		}
-
 	}
 
+	public Optional<Shelf> getShelvesWithItem(int id) {
+//		System.out.println("no==>" + id);
+
+		Optional<Shelf> oShelf = shelfRepository.findByItemIdNotNull(id);
+//		List<Shelf> list = new ArrayList<Shelf>();
+//		getShelves().stream().forEach(s -> {
+//			if (s.getItem().getId() == id && s.getItem_quantity() < s.getCapacity()) {
+//				list.add(s);
+//				System.out.println("list add");
+//			} else {
+//				System.out.println("Boş shelf bulunamadı");
+//			}
+//		});
+		return oShelf;
+	}
+
+	public int getEmptyShelfCount() {
+		List<Shelf> emptyShelf = getShelves().stream().filter(shelf -> shelf.getItem() == null).toList();
+		System.out.println(emptyShelf.size());
+		return emptyShelf.size();
+	}
+
+	public Optional<Shelf> test(int id) {
+		return shelfRepository.findByItemIdNotNull(id);
+	}
 }
