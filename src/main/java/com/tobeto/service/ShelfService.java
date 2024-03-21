@@ -53,16 +53,6 @@ public class ShelfService {
 
 	public int getNumbers() {
 		return shelfRepository.findAll().size();
-
-//		List<Integer> list = new ArrayList<>();
-//		for (int i = 0; i < repository.findAll().size(); i++) {
-//			list.add(repository.findAll().get(i).getNo());
-//			System.out.println("i==> " + i);
-//		}
-//		Stream<Shelf> stream = getShelves().stream();
-//		stream.forEach(a -> list.add(a.getNo()));
-//		getShelves().forEach(a -> list.add(a.getNo()));
-//		return list;
 	}
 
 	public void deleteShelf(int id) {
@@ -97,7 +87,7 @@ public class ShelfService {
 		return emptyShelf.size();
 	}
 
-	public Optional<Shelf> test(int id) {
-		return shelfRepository.findByItemIdNotNull(id);
-	}
+//	public Optional<Shelf> test(int id) {
+//		return shelfRepository.findByItemIdNotNull(id);
+//	}
 }

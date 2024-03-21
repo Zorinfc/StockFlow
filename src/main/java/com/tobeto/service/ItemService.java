@@ -1,11 +1,13 @@
 package com.tobeto.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.tobeto.dto.item.AllItemsDTO;
 import com.tobeto.entity.Item;
 import com.tobeto.entity.Shelf;
 import com.tobeto.repository.ItemRepository;
@@ -25,8 +27,11 @@ public class ItemService {
 	private ShelfService shelfService;
 
 	public Item addItem(Item item, int total) {
-		if (itemRepository.findByName(item.getName()).isPresent()) {
-			saveItemtoShelf(item, total);
+		Optional<Item> optItem = itemRepository.findByName(item.getName());
+//		System.out.println("service ==> " + optItem);
+//		System.err.println(total);
+		if (optItem.isPresent()) {
+			saveItemtoShelf(optItem.get(), total);
 		} else {
 			itemRepository.save(item);
 			saveItemtoShelf(item, total);
@@ -36,6 +41,28 @@ public class ItemService {
 
 	public List<Item> getItems() {
 		return itemRepository.findAll();
+	}
+
+	public List<AllItemsDTO> getAllItem() {
+		List<Shelf> list = shelfService.getShelves();
+		List<AllItemsDTO> response = new ArrayList<AllItemsDTO>();
+		int toplam = 0;
+		for (int i = 0; i < getItems().size(); i++) {
+
+			for (int j = 0; j < list.size(); j++) {
+				if (getItems().get(i).getId() == list.get(j).getItem().getId()) {
+					toplam += list.get(j).getItem_quantity();
+				}
+
+			}
+			AllItemsDTO dto = new AllItemsDTO();
+			dto.setTotal(toplam);
+			dto.setMin_quantity(getItems().get(i).getMin_quantity());
+			dto.setName(getItems().get(i).getName());
+			response.add(dto);
+			toplam = 0;
+		}
+		return response;
 	}
 
 	public Item getItem(int id) {
@@ -57,48 +84,24 @@ public class ItemService {
 			total -= count;
 		}
 		if (total > 0) {
-			Shelf shelf = shelfService.getEmptyShelf();
-			System.out.println(shelf);
-
+			fillEmptyShelf(total, item);
 		}
 	}
 
-//	@Transactional
-//	public void saveItemtoShelf(Item item, int total) {
-//		// getShelfWithItem null geliyor..
-//		while (total > 0) {
-//			List<Shelf> list = shelfService.getShelvesWithItem(item.getId()).get();
-//			int listSize = list.size();
-//			// item idli yer olan shelf var mı
-//			if (listSize != 0) {
-//				for (int i = 0; i < list.size(); i++) {
-//					list.get(i).setItem_quantity(list.get(i).getCapacity() - list.get(i).getItem_quantity());
-//					total -= list.get(i).getCapacity() - list.get(i).getItem_quantity();
-//					listSize--;
-//				}
-//			} else if (list.isEmpty()) {
-//				for (int i = 0; i < shelfService.getEmptyShelfCount(); i++) {
-//					if (total - 5 >= 0) {
-//						Shelf shelf = shelfService.getEmptyShelf();
-//						shelf.setItem(item);
-//						shelf.setItem_quantity(5);
-//						shelfService.saveShelf(shelf);
-//						total -= 5;
-//					} else {
-//						Shelf shelf = shelfService.getEmptyShelf();
-//						shelf.setItem(item);
-//						shelf.setItem_quantity(total);
-//						System.out.println(total);
-//						shelfService.saveShelf(shelf);
-//						total = 0;
-//					}
-//				}
-//			} else {
-//				// yer yok exception ()
-//				System.out.println("boş shelf yok");
-//			}
-//		}
-//
-//	}
+	private void fillEmptyShelf(int total, Item item) {
+
+		while (total > 0) {
+			int count = total;
+			Shelf shelf = shelfService.getEmptyShelf();
+			if (count > shelf.getCapacity()) {
+				count = shelf.getCapacity();
+			}
+			shelf.setItem(item);
+			shelf.setItem_quantity(count);
+			shelfRepository.save(shelf);
+			total -= count;
+		}
+
+	}
 
 }

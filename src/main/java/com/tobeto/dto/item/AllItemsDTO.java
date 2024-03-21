@@ -3,10 +3,9 @@ package com.tobeto.dto.item;
 import lombok.Data;
 
 @Data
-public class ItemCreateDTO {
+public class AllItemsDTO {
 
 	private String name;
 	private int min_quantity;
-	private int item_quantity;
-
+	private int total;
 }

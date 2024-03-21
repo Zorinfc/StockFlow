@@ -1,7 +1,6 @@
 package com.tobeto.controller;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -45,10 +44,10 @@ public class ShelfController {
 //		return shelfService.getShelfWithItem(dto.getNo());
 //	}
 
-	@GetMapping("/deneme")
-	public Optional<Shelf> deneme(@RequestBody ShelfDeleteRequestDTO dto) {
-		return shelfService.test(dto.getNo());
-	}
+//	@GetMapping("/deneme")
+//	public Optional<Shelf> deneme(@RequestBody ShelfDeleteRequestDTO dto) {
+//		return shelfService.test(dto.getNo());
+//	}
 
 //	@GetMapping("/deneme")
 //	public List<Shelf> deneme(@RequestBody String name) {
