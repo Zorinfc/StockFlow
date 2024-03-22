@@ -1,5 +1,6 @@
 package com.tobeto.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -20,6 +21,9 @@ public interface ShelfRepository extends JpaRepository<Shelf, Integer> {
 
 	@Query("SELECT s FROM Shelf s WHERE s.item.id = :itemId and s.item_quantity < s.capacity")
 	Optional<Shelf> findByItemIdNotNull(int itemId);
+
+	@Query("SELECT s FROM Shelf s WHERE s.item.id = :itemId and s.item_quantity = 0")
+	List<Shelf> findByItemId(int itemId);
 
 //	List<Shelf> findAllByItemQuantity(int quantity);
 }

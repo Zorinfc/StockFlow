@@ -5,14 +5,18 @@ import java.util.List;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.tobeto.dto.ResponseMsgDTO;
 import com.tobeto.dto.item.AllItemsDTO;
 import com.tobeto.dto.item.ItemCreateDTO;
+import com.tobeto.dto.item.ItemRequestDTO;
 import com.tobeto.entity.Item;
 import com.tobeto.service.ItemService;
 
@@ -30,6 +34,8 @@ public class ItemController {
 	@Qualifier("responseMapper")
 	private ModelMapper responseMapper;
 
+	// CRUD
+
 	@PostMapping("/add")
 	public Item addItem(@RequestBody ItemCreateDTO dto) {
 		Item item = new Item();
@@ -38,14 +44,21 @@ public class ItemController {
 		return itemService.addItem(item, dto.getItem_quantity());
 	}
 
-//	@GetMapping()
-//	public List<Item> getItems() {
-//		return itemService.getItems();
-//	}
-
 	@GetMapping()
-	public List<AllItemsDTO> testFunc() {
+	public List<AllItemsDTO> getItems() {
 		return itemService.getAllItem();
+	}
+
+	@DeleteMapping("/delete")
+	public ResponseEntity<ResponseMsgDTO> deleteItem(@RequestBody ItemRequestDTO dto) {
+		Item item = requestMapper.map(dto, Item.class);
+		itemService.deleteItem(item);
+		return ResponseEntity.ok(new ResponseMsgDTO(item.getName() + " Deleted"));
+	}
+
+	@GetMapping("/test")
+	public List<Item> test() {
+		return itemService.getItems();
 	}
 
 }

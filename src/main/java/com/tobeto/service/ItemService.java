@@ -28,8 +28,6 @@ public class ItemService {
 
 	public Item addItem(Item item, int total) {
 		Optional<Item> optItem = itemRepository.findByName(item.getName());
-//		System.out.println("service ==> " + optItem);
-//		System.err.println(total);
 		if (optItem.isPresent()) {
 			saveItemtoShelf(optItem.get(), total);
 		} else {
@@ -39,21 +37,21 @@ public class ItemService {
 		return item;
 	}
 
+	// sorunsuz
 	public List<Item> getItems() {
 		return itemRepository.findAll();
 	}
 
+	// hata veren metod
 	public List<AllItemsDTO> getAllItem() {
 		List<Shelf> list = shelfService.getShelves();
 		List<AllItemsDTO> response = new ArrayList<AllItemsDTO>();
 		int toplam = 0;
 		for (int i = 0; i < getItems().size(); i++) {
-
 			for (int j = 0; j < list.size(); j++) {
 				if (getItems().get(i).getId() == list.get(j).getItem().getId()) {
 					toplam += list.get(j).getItem_quantity();
 				}
-
 			}
 			AllItemsDTO dto = new AllItemsDTO();
 			dto.setTotal(toplam);
@@ -89,7 +87,6 @@ public class ItemService {
 	}
 
 	private void fillEmptyShelf(int total, Item item) {
-
 		while (total > 0) {
 			int count = total;
 			Shelf shelf = shelfService.getEmptyShelf();
@@ -101,7 +98,30 @@ public class ItemService {
 			shelfRepository.save(shelf);
 			total -= count;
 		}
-
 	}
+
+	@Transactional
+	public Item deleteItem(Item item) {
+		// silinecek item
+		Optional<Item> opt = itemRepository.findByName(item.getName());
+
+		List<Shelf> tempList = shelfRepository.findByItemId(opt.get().getId());
+		for (int i = 0; i < tempList.size(); i++) {
+			System.err.println(tempList.get(i));
+			shelfRepository.deleteById(tempList.get(i).getId());
+		}
+		itemRepository.delete(opt.get());
+		return item;
+	}
+
+//	public void deleteItemIfQuantityZero(Item item) {
+//		Optional<Item> opt = itemRepository.findByName(item.getName());
+//        if (opt.isPresent()) {
+//            Item item = opt.get();
+//            if (item.getMin_quantity() == 0) {
+//                itemRepository.delete(item);
+//            }
+//        }
+//    } 
 
 }

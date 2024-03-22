@@ -29,8 +29,8 @@ public class ShelfService {
 			if (shelfRepository.findAll().get(getNumbers() - 1)
 					.getNo() == shelfRepository.findAll().get(getNumbers() - 2).getNo() + 1) {
 				Shelf shelf = new Shelf();
-				shelf.setCapacity(5);
 				shelf.setNo(shelfRepository.findAll().get(getNumbers() - 1).getNo() + 1);
+				shelf.setCapacity(5);
 				shelfRepository.save(shelf);
 			}
 		}
