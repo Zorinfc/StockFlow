@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.tobeto.dto.ResponseMsgDTO;
 import com.tobeto.dto.item.AllItemsDTO;
 import com.tobeto.dto.item.ItemCreateDTO;
+import com.tobeto.dto.item.ItemInOutDTO;
 import com.tobeto.dto.item.ItemRequestDTO;
 import com.tobeto.entity.Item;
 import com.tobeto.service.ItemService;
@@ -56,9 +57,15 @@ public class ItemController {
 		return ResponseEntity.ok(new ResponseMsgDTO(item.getName() + " Deleted"));
 	}
 
-	@GetMapping("/test")
-	public List<Item> test() {
-		return itemService.getItems();
+	@PostMapping("/opt")
+	public ResponseEntity<ResponseMsgDTO> inOutItem(@RequestBody ItemInOutDTO dto) {
+		itemService.operation(dto);
+		return ResponseEntity.ok(new ResponseMsgDTO(dto.getName()));
 	}
+
+//	@GetMapping("/test")
+//	public List<Item> test() {
+//		return itemService.getItems();
+//	}
 
 }

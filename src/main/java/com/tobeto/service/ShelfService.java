@@ -65,7 +65,7 @@ public class ShelfService {
 		}
 	}
 
-	public Optional<Shelf> getShelvesWithItem(int id) {
+	public Optional<Shelf> getShelfWithItem(int id) {
 //		System.out.println("no==>" + id);
 
 		Optional<Shelf> oShelf = shelfRepository.findByItemIdNotNull(id);
@@ -87,7 +87,4 @@ public class ShelfService {
 		return emptyShelf.size();
 	}
 
-//	public Optional<Shelf> test(int id) {
-//		return shelfRepository.findByItemIdNotNull(id);
-//	}
 }

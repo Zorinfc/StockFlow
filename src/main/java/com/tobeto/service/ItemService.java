@@ -1,6 +1,7 @@
 package com.tobeto.service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.tobeto.dto.item.AllItemsDTO;
+import com.tobeto.dto.item.ItemInOutDTO;
 import com.tobeto.entity.Item;
 import com.tobeto.entity.Shelf;
 import com.tobeto.repository.ItemRepository;
@@ -26,6 +28,8 @@ public class ItemService {
 	@Autowired
 	private ShelfService shelfService;
 
+	// boş shelf yoksa exception dönmeli !!!
+	@Transactional
 	public Item addItem(Item item, int total) {
 		Optional<Item> optItem = itemRepository.findByName(item.getName());
 		if (optItem.isPresent()) {
@@ -37,19 +41,19 @@ public class ItemService {
 		return item;
 	}
 
-	// sorunsuz
 	public List<Item> getItems() {
 		return itemRepository.findAll();
 	}
 
 	// hata veren metod
+	// cozuldu
 	public List<AllItemsDTO> getAllItem() {
 		List<Shelf> list = shelfService.getShelves();
 		List<AllItemsDTO> response = new ArrayList<AllItemsDTO>();
 		int toplam = 0;
 		for (int i = 0; i < getItems().size(); i++) {
 			for (int j = 0; j < list.size(); j++) {
-				if (getItems().get(i).getId() == list.get(j).getItem().getId()) {
+				if (list.get(j).getItem() != null && getItems().get(i).getId() == list.get(j).getItem().getId()) {
 					toplam += list.get(j).getItem_quantity();
 				}
 			}
@@ -69,7 +73,7 @@ public class ItemService {
 
 	@Transactional
 	public void saveItemtoShelf(Item item, int total) {
-		Optional<Shelf> opt = shelfService.getShelvesWithItem(item.getId());
+		Optional<Shelf> opt = shelfService.getShelfWithItem(item.getId());
 		if (opt.isPresent()) {
 			Shelf shelf = opt.get();
 			int count = total;
@@ -104,24 +108,49 @@ public class ItemService {
 	public Item deleteItem(Item item) {
 		// silinecek item
 		Optional<Item> opt = itemRepository.findByName(item.getName());
-
+		// System.out.println(opt);
 		List<Shelf> tempList = shelfRepository.findByItemId(opt.get().getId());
+		// System.err.println(tempList);
 		for (int i = 0; i < tempList.size(); i++) {
-			System.err.println(tempList.get(i));
-			shelfRepository.deleteById(tempList.get(i).getId());
+			// System.err.println(tempList.get(i));
+			tempList.get(i).setItem_quantity(0);
+			tempList.get(i).setItem(null);
+			shelfRepository.save(tempList.get(i));
 		}
 		itemRepository.delete(opt.get());
 		return item;
 	}
 
-//	public void deleteItemIfQuantityZero(Item item) {
-//		Optional<Item> opt = itemRepository.findByName(item.getName());
-//        if (opt.isPresent()) {
-//            Item item = opt.get();
-//            if (item.getMin_quantity() == 0) {
-//                itemRepository.delete(item);
-//            }
-//        }
-//    } 
+	public void operation(ItemInOutDTO dto) {
+
+		Optional<Item> opItem = itemRepository.findByName(dto.getName());
+//		dto.getCount();
+//		dto.getName();
+
+		// System.out.println(dto.isOperator());
+		if (opItem.isPresent()) {
+			// kapasite kontrolu eklenecek
+			if (dto.isOperator()) {
+				addItem(opItem.get(), dto.getCount());
+			} else {
+				System.err.println("cıkarma");
+				List<Shelf> shelfList = shelfRepository.findByItemId(opItem.get().getId());
+				Optional<Shelf> firstReversedShelf = shelfList.stream().findFirst();
+				Collections.reverse(shelfList);
+				// System.err.println(shelfList);
+				// 7
+				int count = dto.getCount();
+				while (count > 0) {
+					if (firstReversedShelf.get().getItem_quantity() < count) {
+						firstReversedShelf.get().setItem_quantity(0);
+						firstReversedShelf.get().setItem(null);
+						shelfRepository.save(firstReversedShelf.get());
+						count -= firstReversedShelf.get().getItem_quantity();
+					}
+
+				}
+			}
+		}
+	}
 
 }
