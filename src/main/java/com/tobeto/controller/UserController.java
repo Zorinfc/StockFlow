@@ -1,5 +1,6 @@
 package com.tobeto.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.tobeto.dto.user.UserDTO;
+import com.tobeto.dto.user.UserResponseDTO;
 import com.tobeto.entity.User;
 import com.tobeto.service.UserService;
 
@@ -36,13 +38,17 @@ public class UserController {
 	@PostMapping("/create")
 	public ResponseEntity<User> createUser(@RequestBody UserDTO dto) {
 		User user = requestMapper.map(dto, User.class);
-		userService.createUser(user);
-		return ResponseEntity.ok().body(user);
+		return ResponseEntity.ok().body(userService.createUser(user));
 	}
 
 	@GetMapping()
-	public List<User> getUsers() {
-		return userService.getUsers();
+	public List<UserResponseDTO> getUsers() {
+		List<User> list = userService.getUsers();
+		List<UserResponseDTO> dto = new ArrayList<UserResponseDTO>();
+		list.forEach(u -> {
+			dto.add(responseMapper.map(u, UserResponseDTO.class));
+		});
+		return dto;
 	}
 
 	@DeleteMapping("/delete")

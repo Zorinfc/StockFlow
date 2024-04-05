@@ -19,11 +19,15 @@ public interface ShelfRepository extends JpaRepository<Shelf, Integer> {
 //	@Query("SELECT b FROM Box b WHERE b.fruit.id = :fruitId and b.count < b.capacity")
 //	Optional<Box> findByFruitIdNotFull(int fruitId);
 
-	@Query("SELECT s FROM Shelf s WHERE s.item.id = :itemId and s.item_quantity < s.capacity")
+	@Query("SELECT s FROM Shelf s WHERE s.item.id = :itemId and s.quantity < s.capacity")
 	Optional<Shelf> findByItemIdNotNull(int itemId);
 
 	@Query("SELECT s FROM Shelf s WHERE s.item.id = :itemId")
 	List<Shelf> findByItemId(int itemId);
+
+	List<Shelf> findTop50ByOrderByNoAsc();
+
+	Optional<Shelf> findByNo(int no);
 
 //	List<Shelf> findAllByItemQuantity(int quantity);
 }

@@ -7,6 +7,6 @@ public class ItemCreateDTO {
 
 	private String name;
 	private int min_quantity;
-	private int item_quantity;
+	private int quantity;
 
 }

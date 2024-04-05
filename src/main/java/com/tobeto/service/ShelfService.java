@@ -17,6 +17,7 @@ public class ShelfService {
 
 	public int addShelf(int count) {
 		int shelfCount = (int) shelfRepository.count();
+		// private static final
 		int maxShelf = 10;
 		if (maxShelf < shelfCount + count) {
 			// count 40
@@ -25,17 +26,36 @@ public class ShelfService {
 			count = maxShelf - shelfCount;
 			// 0 döndüğünde exception olacak (max kapasiteye ulaşıldı gibi)
 		}
+
 		for (int i = 0; i < count; i++) {
-			if (shelfRepository.findAll().get(getNumbers() - 1)
-					.getNo() == shelfRepository.findAll().get(getNumbers() - 2).getNo() + 1) {
-				Shelf shelf = new Shelf();
-				shelf.setNo(shelfRepository.findAll().get(getNumbers() - 1).getNo() + 1);
-				shelf.setCapacity(5);
-				shelfRepository.save(shelf);
+			Shelf shelf = new Shelf();
+			shelf.setNo(eksikSayilariBul());
+			shelf.setCapacity(5);
+			shelfRepository.save(shelf);
+		}
+		return count;
+	}
+
+	public Integer eksikSayilariBul() {
+		List<Shelf> liste = shelfRepository.findTop50ByOrderByNoAsc();
+		int check = 0;
+		int count = 0;
+		int rtr = 0;
+//	        // listenin içindeki sayıları kontrol dizisine işaretle
+//	        for (int num : liste) {
+//	            kontrol[num] = true;
+//	        }
+		while (check == 0 && count < liste.size()) {
+			if (liste.get(count).getNo() == count + 1) {
+				count++;
+				rtr = count + 1;
+			} else {
+				rtr = count + 1;
+				check = 1;
 			}
 		}
 
-		return count;
+		return rtr;
 	}
 
 	public void saveShelf(Shelf shelf) {
@@ -43,7 +63,7 @@ public class ShelfService {
 	}
 
 	public List<Shelf> getShelves() {
-		return shelfRepository.findAll();
+		return shelfRepository.findTop50ByOrderByNoAsc();
 	}
 
 	public Shelf getEmptyShelf() {
@@ -55,9 +75,9 @@ public class ShelfService {
 		return shelfRepository.findAll().size();
 	}
 
-	public void deleteShelf(int id) {
-		Optional<Shelf> shelf = shelfRepository.findById(id);
-		if (shelf.isPresent()) {
+	public void deleteShelf(int no) {
+		Optional<Shelf> shelf = shelfRepository.findByNo(no);
+		if (shelf.isPresent() && shelf.get().getQuantity() == 0) {
 			shelfRepository.delete(shelf.get());
 
 		} else {

@@ -22,7 +22,7 @@ public class Shelf {
 	private int id;
 	@Column(unique = true)
 	private int no;
-	private int item_quantity;
+	private int quantity;
 	private int capacity;
 
 	@ManyToOne

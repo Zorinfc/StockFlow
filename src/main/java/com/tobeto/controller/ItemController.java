@@ -42,7 +42,7 @@ public class ItemController {
 		Item item = new Item();
 		item.setMin_quantity(dto.getMin_quantity());
 		item.setName(dto.getName());
-		return itemService.addItem(item, dto.getItem_quantity());
+		return itemService.addItem(item, dto.getQuantity());
 	}
 
 	@GetMapping()

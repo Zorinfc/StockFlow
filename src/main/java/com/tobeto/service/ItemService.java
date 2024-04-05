@@ -54,7 +54,7 @@ public class ItemService {
 		for (int i = 0; i < getItems().size(); i++) {
 			for (int j = 0; j < list.size(); j++) {
 				if (list.get(j).getItem() != null && getItems().get(i).getId() == list.get(j).getItem().getId()) {
-					toplam += list.get(j).getItem_quantity();
+					toplam += list.get(j).getQuantity();
 				}
 			}
 			AllItemsDTO dto = new AllItemsDTO();
@@ -77,11 +77,11 @@ public class ItemService {
 		if (opt.isPresent()) {
 			Shelf shelf = opt.get();
 			int count = total;
-			int emptySpace = shelf.getCapacity() - shelf.getItem_quantity();
+			int emptySpace = shelf.getCapacity() - shelf.getQuantity();
 			if (count > emptySpace) {
 				count = emptySpace;
 			}
-			shelf.setItem_quantity(shelf.getItem_quantity() + count);
+			shelf.setQuantity(shelf.getQuantity() + count);
 			shelfRepository.save(shelf);
 			total -= count;
 		}
@@ -98,7 +98,7 @@ public class ItemService {
 				count = shelf.getCapacity();
 			}
 			shelf.setItem(item);
-			shelf.setItem_quantity(count);
+			shelf.setQuantity(count);
 			shelfRepository.save(shelf);
 			total -= count;
 		}
@@ -113,7 +113,7 @@ public class ItemService {
 		// System.err.println(tempList);
 		for (int i = 0; i < tempList.size(); i++) {
 			// System.err.println(tempList.get(i));
-			tempList.get(i).setItem_quantity(0);
+			tempList.get(i).setQuantity(0);
 			tempList.get(i).setItem(null);
 			shelfRepository.save(tempList.get(i));
 		}
@@ -141,11 +141,11 @@ public class ItemService {
 				// 7
 				int count = dto.getCount();
 				while (count > 0) {
-					if (firstReversedShelf.get().getItem_quantity() < count) {
-						firstReversedShelf.get().setItem_quantity(0);
+					if (firstReversedShelf.get().getQuantity() < count) {
+						firstReversedShelf.get().setQuantity(0);
 						firstReversedShelf.get().setItem(null);
 						shelfRepository.save(firstReversedShelf.get());
-						count -= firstReversedShelf.get().getItem_quantity();
+						count -= firstReversedShelf.get().getQuantity();
 					}
 
 				}

@@ -19,7 +19,6 @@ import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
-import io.jsonwebtoken.io.Encoders;
 import io.jsonwebtoken.security.Keys;
 
 @Service
@@ -55,13 +54,14 @@ public class TokenService {
 		return key;
 	}
 
-	public static void main(String[] args) {
-		keyUret();
-	}
-
-	public static void keyUret() {
-		SecretKey key = Jwts.SIG.HS512.key().build();
-		String str = Encoders.BASE64.encode(key.getEncoded());
-		System.out.println(str);
-	}
+// secret key uretme
+//	public static void main(String[] args) {
+//		keyUret();
+//	}
+//
+//	public static void keyUret() {
+//		SecretKey key = Jwts.SIG.HS512.key().build();
+//		String str = Encoders.BASE64.encode(key.getEncoded());
+//		System.out.println(str);
+//	}
 }

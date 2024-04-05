@@ -2,8 +2,9 @@ package com.tobeto.controller;
 
 import java.util.List;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -12,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.tobeto.dto.shelf.ShelfCreateDTO;
 import com.tobeto.dto.shelf.ShelfDeleteRequestDTO;
-import com.tobeto.entity.Shelf;
+import com.tobeto.dto.shelf.ShelfResponseDTO;
 import com.tobeto.service.ShelfService;
 
 @RestController
@@ -21,11 +22,21 @@ public class ShelfController {
 
 	@Autowired
 	private ShelfService shelfService;
+	@Autowired
+	@Qualifier("requestMapper")
+	private ModelMapper requestMapper;
+
+	@Autowired
+	@Qualifier("responseMapper")
+	private ModelMapper responseMapper;
 
 	@GetMapping()
-	public List<Shelf> getShelves() {
-//		System.out.println("getShelves.size()==>" + shelfService.getShelves().size());
-		return shelfService.getShelves();
+	public List<ShelfResponseDTO> getShelves() {
+
+		List<ShelfResponseDTO> response = shelfService.getShelves().stream()
+				.map(s -> responseMapper.map(s, ShelfResponseDTO.class)).toList();
+
+		return response;
 	}
 
 	@PostMapping("/add")
@@ -34,8 +45,9 @@ public class ShelfController {
 		return String.valueOf(count);
 	}
 
-	@DeleteMapping("/delete")
+	@PostMapping("/delete")
 	public void deleteShelf(@RequestBody ShelfDeleteRequestDTO dto) {
+//		System.err.println(dto);
 		shelfService.deleteShelf(dto.getNo());
 	}
 
