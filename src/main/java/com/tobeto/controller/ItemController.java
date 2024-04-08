@@ -6,7 +6,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -38,11 +37,13 @@ public class ItemController {
 	// CRUD
 
 	@PostMapping("/add")
-	public Item addItem(@RequestBody ItemCreateDTO dto) {
+	public ResponseEntity<ResponseMsgDTO> addItem(@RequestBody ItemCreateDTO dto) {
 		Item item = new Item();
 		item.setMin_quantity(dto.getMin_quantity());
 		item.setName(dto.getName());
-		return itemService.addItem(item, dto.getQuantity());
+		itemService.addItem(item, dto.getQuantity());
+		System.out.println(dto);
+		return ResponseEntity.ok(new ResponseMsgDTO(item.getName() + " Added"));
 	}
 
 	@GetMapping()
@@ -50,7 +51,7 @@ public class ItemController {
 		return itemService.getAllItem();
 	}
 
-	@DeleteMapping("/delete")
+	@PostMapping("/delete")
 	public ResponseEntity<ResponseMsgDTO> deleteItem(@RequestBody ItemRequestDTO dto) {
 		Item item = requestMapper.map(dto, Item.class);
 		itemService.deleteItem(item);
@@ -60,6 +61,7 @@ public class ItemController {
 	@PostMapping("/opt")
 	public ResponseEntity<ResponseMsgDTO> inOutItem(@RequestBody ItemInOutDTO dto) {
 		itemService.operation(dto);
+		System.out.println(dto);
 		return ResponseEntity.ok(new ResponseMsgDTO(dto.getName()));
 	}
 

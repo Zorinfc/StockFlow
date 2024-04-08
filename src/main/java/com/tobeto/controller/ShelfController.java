@@ -46,9 +46,9 @@ public class ShelfController {
 	}
 
 	@PostMapping("/delete")
-	public void deleteShelf(@RequestBody ShelfDeleteRequestDTO dto) {
+	public boolean deleteShelf(@RequestBody ShelfDeleteRequestDTO dto) {
 //		System.err.println(dto);
-		shelfService.deleteShelf(dto.getNo());
+		return shelfService.deleteShelf(dto.getNo());
 	}
 
 //	@GetMapping("/test")

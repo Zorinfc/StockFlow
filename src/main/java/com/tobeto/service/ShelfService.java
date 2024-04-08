@@ -75,13 +75,13 @@ public class ShelfService {
 		return shelfRepository.findAll().size();
 	}
 
-	public void deleteShelf(int no) {
+	public boolean deleteShelf(int no) {
 		Optional<Shelf> shelf = shelfRepository.findByNo(no);
 		if (shelf.isPresent() && shelf.get().getQuantity() == 0) {
 			shelfRepository.delete(shelf.get());
-
+			return true;
 		} else {
-			// exception
+			return false;
 		}
 	}
 

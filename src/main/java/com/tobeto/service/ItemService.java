@@ -1,7 +1,6 @@
 package com.tobeto.service;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -124,31 +123,48 @@ public class ItemService {
 	public void operation(ItemInOutDTO dto) {
 
 		Optional<Item> opItem = itemRepository.findByName(dto.getName());
-//		dto.getCount();
-//		dto.getName();
-
+		int count = dto.getCount();
 		// System.out.println(dto.isOperator());
 		if (opItem.isPresent()) {
 			// kapasite kontrolu eklenecek
 			if (dto.isOperator()) {
 				addItem(opItem.get(), dto.getCount());
 			} else {
-				System.err.println("cıkarma");
-				List<Shelf> shelfList = shelfRepository.findByItemId(opItem.get().getId());
-				Optional<Shelf> firstReversedShelf = shelfList.stream().findFirst();
-				Collections.reverse(shelfList);
-				// System.err.println(shelfList);
-				// 7
-				int count = dto.getCount();
-				while (count > 0) {
-					if (firstReversedShelf.get().getQuantity() < count) {
-						firstReversedShelf.get().setQuantity(0);
-						firstReversedShelf.get().setItem(null);
-						shelfRepository.save(firstReversedShelf.get());
-						count -= firstReversedShelf.get().getQuantity();
+				// TEKRAR BAKILACAK
+				List<Shelf> list = shelfRepository.findAll();
+				System.out.println("for dışı");
+				for (int i = list.size() - 1; i >= 0; i--) {
+					Shelf shelf = list.get(i);
+					System.out.println("for içi" + i);
+					if (list.get(i).getItem() != null && list.get(i).getItem().getName() == dto.getName()
+							&& count >= list.get(i).getQuantity()) {
+						System.out.println("if içi" + count);
+						count = count - shelf.getQuantity();
+						shelf.setQuantity(0);
+						shelf.setItem(null);
+						shelfRepository.save(shelf);
+					} else {
+						System.out.println("else");
+						shelf.setQuantity(shelf.getQuantity() - count);
+						count = 0;
 					}
-
 				}
+
+//				List<Shelf> shelfList = shelfRepository.findByItemId(opItem.get().getId());
+//				Collections.reverse(shelfList);
+//				Optional<Shelf> firstReversedShelf = shelfList.stream().findFirst();
+//				// System.err.println(shelfList);
+//				// 7
+//				int count = dto.getCount();
+//				while (count > 0) {
+//					if (firstReversedShelf.get().getQuantity() < count) {
+//						firstReversedShelf.get().setQuantity(0);
+//						firstReversedShelf.get().setItem(null);
+//						shelfRepository.save(firstReversedShelf.get());
+//						count -= firstReversedShelf.get().getQuantity();
+//					}
+//
+//				}
 			}
 		}
 	}
