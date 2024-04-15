@@ -21,7 +21,7 @@ import com.tobeto.entity.Item;
 import com.tobeto.service.ItemService;
 
 @RestController
-@RequestMapping("/item")
+@RequestMapping("/api/v1/item")
 public class ItemController {
 
 	@Autowired
@@ -52,16 +52,15 @@ public class ItemController {
 	}
 
 	@PostMapping("/delete")
-	public ResponseEntity<ResponseMsgDTO> deleteItem(@RequestBody ItemRequestDTO dto) {
+	public boolean deleteItem(@RequestBody ItemRequestDTO dto) {
 		Item item = requestMapper.map(dto, Item.class);
-		itemService.deleteItem(item);
-		return ResponseEntity.ok(new ResponseMsgDTO(item.getName() + " Deleted"));
+		return itemService.deleteItem(item);
+
 	}
 
 	@PostMapping("/opt")
 	public ResponseEntity<ResponseMsgDTO> inOutItem(@RequestBody ItemInOutDTO dto) {
 		itemService.operation(dto);
-		System.out.println(dto);
 		return ResponseEntity.ok(new ResponseMsgDTO(dto.getName()));
 	}
 

@@ -2,7 +2,6 @@ package com.tobeto.controller;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +21,7 @@ import com.tobeto.entity.User;
 import com.tobeto.service.UserService;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/api/v1/user")
 public class UserController {
 
 	@Autowired
@@ -57,9 +56,9 @@ public class UserController {
 	}
 
 	@PutMapping("/update")
-	public void updateUser(@RequestBody UserDTO dto, UUID id) {
+	public void updateUser(@RequestBody UserDTO dto) {
 		User user = requestMapper.map(dto, User.class);
-		userService.updateUser(id, user);
+		userService.updateUser(user);
 	}
 
 }

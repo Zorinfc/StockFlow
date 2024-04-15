@@ -104,20 +104,24 @@ public class ItemService {
 	}
 
 	@Transactional
-	public Item deleteItem(Item item) {
+	public boolean deleteItem(Item item) {
 		// silinecek item
 		Optional<Item> opt = itemRepository.findByName(item.getName());
+		boolean returnValue = false;
 		// System.out.println(opt);
 		List<Shelf> tempList = shelfRepository.findByItemId(opt.get().getId());
-		// System.err.println(tempList);
-		for (int i = 0; i < tempList.size(); i++) {
-			// System.err.println(tempList.get(i));
-			tempList.get(i).setQuantity(0);
-			tempList.get(i).setItem(null);
-			shelfRepository.save(tempList.get(i));
+		if (opt.isPresent()) {
+			// System.err.println(tempList);
+			for (int i = 0; i < tempList.size(); i++) {
+				// System.err.println(tempList.get(i));
+				tempList.get(i).setQuantity(0);
+				tempList.get(i).setItem(null);
+				shelfRepository.save(tempList.get(i));
+			}
+			itemRepository.delete(opt.get());
+			returnValue = true;
 		}
-		itemRepository.delete(opt.get());
-		return item;
+		return returnValue;
 	}
 
 	public void operation(ItemInOutDTO dto) {
@@ -130,41 +134,25 @@ public class ItemService {
 			if (dto.isOperator()) {
 				addItem(opItem.get(), dto.getCount());
 			} else {
-				// TEKRAR BAKILACAK
-				List<Shelf> list = shelfRepository.findAll();
-				System.out.println("for dışı");
-				for (int i = list.size() - 1; i >= 0; i--) {
-					Shelf shelf = list.get(i);
-					System.out.println("for içi" + i);
-					if (list.get(i).getItem() != null && list.get(i).getItem().getName() == dto.getName()
-							&& count >= list.get(i).getQuantity()) {
-						System.out.println("if içi" + count);
-						count = count - shelf.getQuantity();
-						shelf.setQuantity(0);
-						shelf.setItem(null);
-						shelfRepository.save(shelf);
-					} else {
-						System.out.println("else");
-						shelf.setQuantity(shelf.getQuantity() - count);
-						count = 0;
+				List<Shelf> list = shelfRepository.findTop50ByOrderByNoDesc();
+				for (int i = 0; i < list.size(); i++) {
+					if (list.get(i).getItem() != null && dto.getName().equals(list.get(i).getItem().getName())) {
+//						System.err.println(i);
+
+						if (list.get(i).getQuantity() <= count) {
+							count = count - list.get(i).getQuantity();
+							list.get(i).setItem(null);
+							list.get(i).setQuantity(0);
+							shelfRepository.save(list.get(i));
+							System.err.println(count);
+						} else {
+							list.get(i).setQuantity(list.get(i).getQuantity() - count);
+							count = 0;
+							shelfRepository.save(list.get(i));
+						}
+
 					}
 				}
-
-//				List<Shelf> shelfList = shelfRepository.findByItemId(opItem.get().getId());
-//				Collections.reverse(shelfList);
-//				Optional<Shelf> firstReversedShelf = shelfList.stream().findFirst();
-//				// System.err.println(shelfList);
-//				// 7
-//				int count = dto.getCount();
-//				while (count > 0) {
-//					if (firstReversedShelf.get().getQuantity() < count) {
-//						firstReversedShelf.get().setQuantity(0);
-//						firstReversedShelf.get().setItem(null);
-//						shelfRepository.save(firstReversedShelf.get());
-//						count -= firstReversedShelf.get().getQuantity();
-//					}
-//
-//				}
 			}
 		}
 	}

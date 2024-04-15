@@ -59,9 +59,9 @@ public class UserService {
 	}
 
 	// update ( sifre degisikligi)
-	public User updateUser(UUID id, User user) {
+	public User updateUser(User user) {
 
-		Optional<User> optUser = userRepository.findById(id);
+		Optional<User> optUser = getUserByEmail(user.getEmail());
 
 		if (optUser.isPresent()) {
 			optUser.get().setEmail(user.getEmail());

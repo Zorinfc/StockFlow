@@ -17,7 +17,7 @@ import com.tobeto.dto.shelf.ShelfResponseDTO;
 import com.tobeto.service.ShelfService;
 
 @RestController
-@RequestMapping("/shelf")
+@RequestMapping("/api/v1/shelf")
 public class ShelfController {
 
 	@Autowired
