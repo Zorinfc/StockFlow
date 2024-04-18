@@ -2,20 +2,21 @@ package com.tobeto.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.tobeto.dto.user.UpdateResponseDTO;
 import com.tobeto.dto.user.UserDTO;
+import com.tobeto.dto.user.UserRequestDTO;
 import com.tobeto.dto.user.UserResponseDTO;
 import com.tobeto.entity.User;
 import com.tobeto.service.UserService;
@@ -35,9 +36,8 @@ public class UserController {
 	private ModelMapper responseMapper;
 
 	@PostMapping("/create")
-	public ResponseEntity<User> createUser(@RequestBody UserDTO dto) {
-		User user = requestMapper.map(dto, User.class);
-		return ResponseEntity.ok().body(userService.createUser(user));
+	public boolean createUser(@RequestBody UserDTO dto) {
+		return userService.createUser(dto);
 	}
 
 	@GetMapping()
@@ -50,15 +50,24 @@ public class UserController {
 		return dto;
 	}
 
-	@DeleteMapping("/delete")
-	public void deleteUser(@RequestBody User user) {
-		userService.deleteUser(user);
+	@GetMapping("/get")
+	public UserResponseDTO getUser(@RequestParam String email) {
+		Optional<User> user = userService.getUserByEmail(email);
+		UserResponseDTO response = requestMapper.map(user.get(), UserResponseDTO.class);
+//		System.err.println(email);
+		return response;
 	}
 
-	@PutMapping("/update")
-	public void updateUser(@RequestBody UserDTO dto) {
-		User user = requestMapper.map(dto, User.class);
-		userService.updateUser(user);
+	@PostMapping("/delete")
+	public boolean deleteUser(@RequestBody UserRequestDTO dto) {
+		return userService.deleteUser(dto);
+	}
+
+	@PostMapping("/update")
+	public UpdateResponseDTO updateUser(@RequestBody UserDTO dto) {
+		User user = userService.updateUser(dto);
+		UpdateResponseDTO response = requestMapper.map(user, UpdateResponseDTO.class);
+		return response;
 	}
 
 }

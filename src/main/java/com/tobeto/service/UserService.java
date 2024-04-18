@@ -8,6 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.tobeto.dto.user.UserDTO;
+import com.tobeto.dto.user.UserRequestDTO;
+import com.tobeto.entity.Role;
 import com.tobeto.entity.User;
 import com.tobeto.repository.UserRepository;
 
@@ -19,31 +22,41 @@ public class UserService {
 	@Autowired
 	private UserRepository userRepository;
 	@Autowired
+	private RoleService roleService;
+	@Autowired
 	private PasswordEncoder encoder;
 
 	// create
 	// duzenlenecek (eklenmek istenene personel var mı gibi)
 	// sifre encode edilecek
 	@Transactional
-	public User createUser(User user) {
+	public boolean createUser(UserDTO user) {
+		boolean returnValue = false;
+		Optional<User> check = userRepository.findByEmail(user.getEmail());
 		User tempUser = new User();
-		tempUser.setEmail(user.getEmail());
-		tempUser.setPassword(encoder.encode(user.getPassword()));
-		tempUser.setName(user.getName());
-		tempUser.setLastName(user.getLastName());
-		tempUser.setRole(user.getRole());
-		return userRepository.save(tempUser);
+		Role role = roleService.findById(user.getRoleId()).get();
+		if (!check.isPresent()) {
+			tempUser.setEmail(user.getEmail());
+			tempUser.setPassword(encoder.encode(user.getPassword()));
+			tempUser.setName(user.getName());
+			tempUser.setLastName(user.getLastName());
+			tempUser.setRole(role);
+			userRepository.save(tempUser);
+			returnValue = true;
+		}
+
+		return returnValue;
 	}
 
 	// delete
-	public void deleteUser(User user) {
-
-		Optional<User> optUser = userRepository.findById(user.getId());
+	public boolean deleteUser(UserRequestDTO user) {
+		boolean returnValue = false;
+		Optional<User> optUser = userRepository.findByEmail(user.getEmail());
 		if (optUser.isPresent()) {
-			userRepository.delete(user);
-		} else {
-			System.err.println("user not found");
+			userRepository.delete(optUser.get());
+			returnValue = true;
 		}
+		return returnValue;
 	}
 
 	public List<User> getUsers() {
@@ -59,16 +72,15 @@ public class UserService {
 	}
 
 	// update ( sifre degisikligi)
-	public User updateUser(User user) {
+	public User updateUser(UserDTO dto) {
 
-		Optional<User> optUser = getUserByEmail(user.getEmail());
-
+		Optional<User> optUser = getUserByEmail(dto.getEmail());
 		if (optUser.isPresent()) {
-			optUser.get().setEmail(user.getEmail());
-			optUser.get().setName(user.getName());
-			optUser.get().setLastName(user.getLastName());
-			optUser.get().setPassword(user.getPassword());
-			optUser.get().setRole(user.getRole());
+//			optUser.get().setEmail(dto.getEmail());
+			optUser.get().setName(dto.getName());
+			optUser.get().setLastName(dto.getLastName());
+			optUser.get().setPassword(encoder.encode(dto.getPassword()));
+			optUser.get().setRole(roleService.findById(dto.getRoleId()).get());
 			return userRepository.save(optUser.get());
 
 		} else {
