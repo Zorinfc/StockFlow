@@ -1,6 +1,7 @@
 package com.tobeto.controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +14,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.tobeto.dto.shelf.ShelfCreateDTO;
 import com.tobeto.dto.shelf.ShelfDeleteRequestDTO;
+import com.tobeto.dto.shelf.ShelfEditDTO;
 import com.tobeto.dto.shelf.ShelfResponseDTO;
+import com.tobeto.entity.Shelf;
 import com.tobeto.service.ShelfService;
 
 @RestController
@@ -39,6 +42,11 @@ public class ShelfController {
 		return response;
 	}
 
+	@PostMapping("/edit")
+	public Optional<Shelf> editShelf(@RequestBody ShelfEditDTO dto) {
+		return shelfService.editShelf(dto);
+	}
+
 	@PostMapping("/add")
 	public String addShelf(@RequestBody ShelfCreateDTO dto) {
 		int count = shelfService.addShelf(dto.getCount());
@@ -47,22 +55,7 @@ public class ShelfController {
 
 	@PostMapping("/delete")
 	public boolean deleteShelf(@RequestBody ShelfDeleteRequestDTO dto) {
-//		System.err.println(dto);
 		return shelfService.deleteShelf(dto.getNo());
 	}
 
-//	@GetMapping("/test")
-//	public List<Shelf> test(@RequestBody ShelfDeleteRequestDTO dto) {
-//		return shelfService.getShelfWithItem(dto.getNo());
-//	}
-
-//	@GetMapping("/deneme")
-//	public Optional<Shelf> deneme(@RequestBody ShelfDeleteRequestDTO dto) {
-//		return shelfService.test(dto.getNo());
-//	}
-
-//	@GetMapping("/deneme")
-//	public List<Shelf> deneme(@RequestBody String name) {
-//		return shelfService.testShelfFunction(name);
-//	}
 }

@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.tobeto.dto.shelf.ShelfEditDTO;
 import com.tobeto.entity.Shelf;
 import com.tobeto.repository.ShelfRepository;
 
@@ -64,6 +65,18 @@ public class ShelfService {
 
 	public List<Shelf> getShelves() {
 		return shelfRepository.findTop50ByOrderByNoAsc();
+	}
+
+	public Optional<Shelf> editShelf(ShelfEditDTO dto) {
+		Optional<Shelf> shelf = shelfRepository.findByNo(dto.getNo());
+		shelf.get().setQuantity(shelf.get().getQuantity() - dto.getQuantity());
+
+		if (shelf.get().getQuantity() == 0) {
+			shelf.get().setItem(null);
+		}
+
+		shelfRepository.save(shelf.get());
+		return shelf;
 	}
 
 	public Shelf getEmptyShelf() {

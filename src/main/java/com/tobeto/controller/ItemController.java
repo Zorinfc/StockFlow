@@ -1,5 +1,6 @@
 package com.tobeto.controller;
 
+import java.util.Date;
 import java.util.List;
 
 import org.modelmapper.ModelMapper;
@@ -18,7 +19,9 @@ import com.tobeto.dto.item.ItemCreateDTO;
 import com.tobeto.dto.item.ItemInOutDTO;
 import com.tobeto.dto.item.ItemRequestDTO;
 import com.tobeto.entity.Item;
+import com.tobeto.entity.Report;
 import com.tobeto.service.ItemService;
+import com.tobeto.service.ReportService;
 
 @RestController
 @RequestMapping("/api/v1/item")
@@ -26,6 +29,9 @@ public class ItemController {
 
 	@Autowired
 	private ItemService itemService;
+
+	@Autowired
+	private ReportService reportService;
 	@Autowired
 	@Qualifier("requestMapper")
 	private ModelMapper requestMapper;
@@ -64,9 +70,12 @@ public class ItemController {
 		return ResponseEntity.ok(new ResponseMsgDTO(dto.getName()));
 	}
 
-//	@GetMapping("/test")
-//	public List<Item> test() {
-//		return itemService.getItems();
-//	}
+	@PostMapping("/report")
+	public Report createReport() {
+		String desc = "deneme string description";
+		Date date = new Date();
+		Item item = itemService.getItem(26);
+		return reportService.createReport(desc, date, item);
+	}
 
 }

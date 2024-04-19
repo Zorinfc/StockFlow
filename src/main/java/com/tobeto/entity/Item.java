@@ -16,8 +16,8 @@ import lombok.ToString;
 
 @Data
 @Entity
-@ToString(exclude = "shelf")
-@EqualsAndHashCode(exclude = "shelf")
+@ToString(exclude = { "shelf", "reports" })
+@EqualsAndHashCode(exclude = { "shelf", "reports" })
 public class Item {
 
 	@Id
@@ -30,4 +30,8 @@ public class Item {
 	@JsonIgnore
 	@OneToMany(mappedBy = "item")
 	private List<Shelf> shelf;
+
+	@JsonIgnore
+	@OneToMany(mappedBy = "item")
+	private List<Report> reports;
 }

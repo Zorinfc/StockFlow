@@ -73,21 +73,22 @@ public class UserService {
 
 	// update ( sifre degisikligi)
 	public User updateUser(UserDTO dto) {
-
 		Optional<User> optUser = getUserByEmail(dto.getEmail());
 		if (optUser.isPresent()) {
-//			optUser.get().setEmail(dto.getEmail());
-			optUser.get().setName(dto.getName());
-			optUser.get().setLastName(dto.getLastName());
-			optUser.get().setPassword(encoder.encode(dto.getPassword()));
-			optUser.get().setRole(roleService.findById(dto.getRoleId()).get());
+			if (optUser.get().getPassword() == "") {
+				optUser.get().setName(dto.getName());
+				optUser.get().setLastName(dto.getLastName());
+				optUser.get().setRole(roleService.findById(dto.getRoleId()).get());
+			} else {
+				optUser.get().setName(dto.getName());
+				optUser.get().setLastName(dto.getLastName());
+				optUser.get().setRole(roleService.findById(dto.getRoleId()).get());
+				optUser.get().setPassword(encoder.encode(dto.getPassword()));
+			}
 			return userRepository.save(optUser.get());
-
 		} else {
 			System.err.println("user not found");
 			return null;
 		}
-
 	}
-
 }

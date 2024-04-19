@@ -51,9 +51,9 @@ public class UserController {
 	}
 
 	@GetMapping("/get")
-	public UserResponseDTO getUser(@RequestParam String email) {
+	public UpdateResponseDTO getUser(@RequestParam String email) {
 		Optional<User> user = userService.getUserByEmail(email);
-		UserResponseDTO response = requestMapper.map(user.get(), UserResponseDTO.class);
+		UpdateResponseDTO response = requestMapper.map(user.get(), UpdateResponseDTO.class);
 //		System.err.println(email);
 		return response;
 	}
@@ -64,9 +64,9 @@ public class UserController {
 	}
 
 	@PostMapping("/update")
-	public UpdateResponseDTO updateUser(@RequestBody UserDTO dto) {
+	public UserResponseDTO updateUser(@RequestBody UserDTO dto) {
 		User user = userService.updateUser(dto);
-		UpdateResponseDTO response = requestMapper.map(user, UpdateResponseDTO.class);
+		UserResponseDTO response = requestMapper.map(user, UserResponseDTO.class);
 		return response;
 	}
 
