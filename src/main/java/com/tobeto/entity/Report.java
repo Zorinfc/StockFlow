@@ -1,7 +1,5 @@
 package com.tobeto.entity;
 
-import java.util.Date;
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -19,12 +17,9 @@ public class Report {
 
 	@ManyToOne
 	private User user;
-
 	@ManyToOne
 	private Item item;
 
 	private String description;
-	private Date reportedDate;
-	private Date closedDate;
 	private boolean isActive;
 }

@@ -44,8 +44,6 @@ public class ItemService {
 		return itemRepository.findAll();
 	}
 
-	// hata veren metod
-	// cozuldu
 	public List<AllItemsDTO> getAllItem() {
 		List<Shelf> list = shelfService.getShelves();
 		List<AllItemsDTO> response = new ArrayList<AllItemsDTO>();
@@ -68,6 +66,10 @@ public class ItemService {
 
 	public Item getItem(int id) {
 		return itemRepository.findById(id).get();
+	}
+
+	public Optional<Item> getItemByName(String name) {
+		return itemRepository.findByName(name);
 	}
 
 	@Transactional
@@ -106,7 +108,7 @@ public class ItemService {
 	@Transactional
 	public boolean deleteItem(Item item) {
 		// silinecek item
-		Optional<Item> opt = itemRepository.findByName(item.getName());
+		Optional<Item> opt = getItemByName(item.getName());
 		boolean returnValue = false;
 		// System.out.println(opt);
 		List<Shelf> tempList = shelfRepository.findByItemId(opt.get().getId());

@@ -1,13 +1,12 @@
 package com.tobeto.service;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.tobeto.entity.Item;
+import com.tobeto.dto.report.ReportCreateDTO;
 import com.tobeto.entity.Report;
 import com.tobeto.repository.ReportRepository;
 
@@ -16,15 +15,18 @@ public class ReportService {
 
 	@Autowired
 	private ReportRepository repository;
+	@Autowired
+	private UserService userService;
+	@Autowired
+	private ItemService itemService;
 
-	public Report createReport(String desc, Date date, Item item) {
+	public Report createReport(ReportCreateDTO dto) {
 
 		Report report = new Report();
-		// report.setReportedDate();
 		report.setActive(true);
-		report.setDescription(desc);
-		report.setItem(item);
-		// report.setReportedDate(date);
+		report.setDescription(dto.getDescription());
+		report.setItem(itemService.getItemByName(dto.getItemName()).get());
+		report.setUser(userService.getUserByEmail(dto.getUserEmail()).get());
 		return repository.save(report);
 	}
 
@@ -34,6 +36,11 @@ public class ReportService {
 
 	public List<Report> getAllReports() {
 		return repository.findAll();
+	}
+
+	public void deleteReport(int id) {
+		Optional<Report> report = getReport(id);
+		repository.delete(report.get());
 	}
 
 	public void closeReport(int id) {

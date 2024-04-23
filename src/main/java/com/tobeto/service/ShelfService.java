@@ -19,7 +19,7 @@ public class ShelfService {
 	public int addShelf(int count) {
 		int shelfCount = (int) shelfRepository.count();
 		// private static final
-		int maxShelf = 10;
+		int maxShelf = 50;
 		if (maxShelf < shelfCount + count) {
 			// count 40
 			// max 50
