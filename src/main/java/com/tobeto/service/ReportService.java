@@ -49,4 +49,11 @@ public class ReportService {
 		// report.get().setClosedDate(date);
 		repository.save(report.get());
 	}
+
+	public void openReport(int id) {
+		Optional<Report> report = getReport(id);
+		report.get().setActive(true);
+		// report.get().setClosedDate(date);
+		repository.save(report.get());
+	}
 }

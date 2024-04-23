@@ -51,4 +51,14 @@ public class ReportController {
 		reportService.closeReport(dto.getId());
 	}
 
+	@PostMapping("/open")
+	public void openReport(@RequestBody ReportRequestDTO dto) {
+		reportService.openReport(dto.getId());
+	}
+
+	@PostMapping("/delete")
+	public void deleteReport(@RequestBody ReportRequestDTO dto) {
+		reportService.deleteReport(dto.getId());
+	}
+
 }
