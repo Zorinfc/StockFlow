@@ -33,12 +33,13 @@ public class TokenService {
 		Role rol = user.getRole();
 		Map<String, Object> customKeys = new HashMap<String, Object>();
 		customKeys.put("role", rol.getName());
+		customKeys.put("email", user.getEmail());
 		builder = builder.claims(customKeys);
 
 //		Instant date = Instant.now().plus(15, ChronoUnit.MINUTES);
 		Instant date = Instant.now().plus(1, ChronoUnit.HOURS);
 
-		builder = builder.id(user.getEmail()).issuedAt(new java.util.Date()).expiration(Date.from(date));
+		builder = builder.id(user.getId().toString()).issuedAt(new java.util.Date()).expiration(Date.from(date));
 
 		return builder.signWith(getKey()).compact();
 	}

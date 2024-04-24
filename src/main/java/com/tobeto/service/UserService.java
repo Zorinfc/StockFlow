@@ -9,6 +9,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.tobeto.dto.user.UserDTO;
+import com.tobeto.dto.user.UserPasswordChangeDTO;
 import com.tobeto.dto.user.UserRequestDTO;
 import com.tobeto.entity.Role;
 import com.tobeto.entity.User;
@@ -71,7 +72,8 @@ public class UserService {
 		return userRepository.findByEmail(email);
 	}
 
-	// update ( sifre degisikligi)
+	// admin için
+	// update
 	public User updateUser(UserDTO dto) {
 		Optional<User> optUser = getUserByEmail(dto.getEmail());
 		if (optUser.isPresent()) {
@@ -90,5 +92,17 @@ public class UserService {
 			System.err.println("user not found");
 			return null;
 		}
+	}
+
+	// şifre değişikliği
+	public boolean changePassword(UserPasswordChangeDTO dto) {
+		boolean retVal = false;
+		Optional<User> optUser = getUserByEmail(dto.getUserEmail());
+		if (optUser.isPresent() && encoder.matches(dto.getPassword(), optUser.get().getPassword())) {
+			optUser.get().setPassword(encoder.encode(dto.getNewPassword()));
+			userRepository.save(optUser.get());
+			retVal = true;
+		}
+		return retVal;
 	}
 }

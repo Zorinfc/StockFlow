@@ -7,6 +7,8 @@ import java.util.Optional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,8 +16,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.tobeto.dto.ResponseMsgDTO;
 import com.tobeto.dto.user.UpdateResponseDTO;
 import com.tobeto.dto.user.UserDTO;
+import com.tobeto.dto.user.UserPasswordChangeDTO;
 import com.tobeto.dto.user.UserRequestDTO;
 import com.tobeto.dto.user.UserResponseDTO;
 import com.tobeto.entity.User;
@@ -68,6 +72,17 @@ public class UserController {
 		User user = userService.updateUser(dto);
 		UserResponseDTO response = requestMapper.map(user, UserResponseDTO.class);
 		return response;
+	}
+
+	@PostMapping("/password")
+	public ResponseEntity<ResponseMsgDTO> passwordChange(@RequestBody UserPasswordChangeDTO dto) {
+		boolean value = userService.changePassword(dto);
+		if (value) {
+			return ResponseEntity.ok().body(new ResponseMsgDTO("Sifre Degistirildi"));
+		} else {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseMsgDTO("Hatalı sifre girildi"));
+		}
+
 	}
 
 }
