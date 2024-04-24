@@ -80,7 +80,7 @@ public class UserController {
 		if (value) {
 			return ResponseEntity.ok().body(new ResponseMsgDTO("Sifre Degistirildi"));
 		} else {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseMsgDTO("Hatalı sifre girildi"));
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseMsgDTO("Hatali sifre girildi"));
 		}
 
 	}
