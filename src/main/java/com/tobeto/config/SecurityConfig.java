@@ -25,10 +25,15 @@ public class SecurityConfig {
 		http
 		.csrf(AbstractHttpConfigurer::disable)
 		.authorizeHttpRequests(authorize -> authorize
-				.requestMatchers("/user/**").hasRole("admin")
-				.requestMatchers("/api/v1/report/").hasRole("rapor_kullanicisi")
-				.requestMatchers("/api/v1/user/get").permitAll()
 				.requestMatchers("/api/v1/login").permitAll()
+				.requestMatchers("/api/v1/user/").hasRole("admin")
+				.requestMatchers("/api/v1/user/get").permitAll()
+				.requestMatchers("/api/v1/shelf").hasAnyRole("admin","depo_sorumlusu")
+				.requestMatchers("/api/v1/shelf/get").permitAll()
+				.requestMatchers("/api/v1/item/get").permitAll()
+				.requestMatchers("/api/v1/item/").hasAnyRole("admin","depo_sorumlusu")
+				.requestMatchers("/api/v1/report/get").permitAll()
+				.requestMatchers("/api/v1/report/").hasRole("rapor_kullanicisi")
 				.anyRequest().authenticated()
 				)
 		     .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

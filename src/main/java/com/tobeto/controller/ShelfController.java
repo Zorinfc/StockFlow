@@ -33,7 +33,7 @@ public class ShelfController {
 	@Qualifier("responseMapper")
 	private ModelMapper responseMapper;
 
-	@GetMapping()
+	@GetMapping("/get")
 	public List<ShelfResponseDTO> getShelves() {
 
 		List<ShelfResponseDTO> response = shelfService.getShelves().stream()

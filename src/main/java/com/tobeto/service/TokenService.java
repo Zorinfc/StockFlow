@@ -38,6 +38,7 @@ public class TokenService {
 
 //		Instant date = Instant.now().plus(15, ChronoUnit.MINUTES);
 		Instant date = Instant.now().plus(1, ChronoUnit.HOURS);
+//		Instant date = Instant.now().plus(20, ChronoUnit.SECONDS);
 
 		builder = builder.id(user.getId().toString()).issuedAt(new java.util.Date()).expiration(Date.from(date));
 

@@ -47,7 +47,7 @@ public class ItemController {
 		return ResponseEntity.ok(new ResponseMsgDTO(item.getName() + " Added"));
 	}
 
-	@GetMapping()
+	@GetMapping("/get")
 	public List<AllItemsDTO> getItems() {
 		return itemService.getAllItem();
 	}
