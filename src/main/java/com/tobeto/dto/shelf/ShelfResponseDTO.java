@@ -12,5 +12,6 @@ public class ShelfResponseDTO {
 	private int no;
 	private int capacity;
 	private int quantity;
+	private int emptySpace;
 	private String itemName;
 }

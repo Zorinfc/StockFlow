@@ -1,5 +1,6 @@
 package com.tobeto.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -7,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.tobeto.dto.shelf.ShelfEditDTO;
+import com.tobeto.dto.shelf.ShelfResponseDTO;
 import com.tobeto.entity.Shelf;
 import com.tobeto.repository.ShelfRepository;
 
@@ -65,6 +67,30 @@ public class ShelfService {
 
 	public List<Shelf> getShelves() {
 		return shelfRepository.findTop50ByOrderByNoAsc();
+	}
+
+	public List<ShelfResponseDTO> getShelvesTest() {
+
+		List<Shelf> list = shelfRepository.findTop50ByOrderByNoAsc();
+		List<ShelfResponseDTO> retList = new ArrayList<ShelfResponseDTO>();
+		for (int i = 0; i < list.size(); i++) {
+			ShelfResponseDTO dto = new ShelfResponseDTO();
+			if (list.get(i).getItem() != null) {
+				dto.setCapacity(list.get(i).getCapacity());
+				dto.setItemName(list.get(i).getItem().getName());
+				dto.setNo(list.get(i).getNo());
+				dto.setQuantity(list.get(i).getQuantity());
+				dto.setEmptySpace(list.get(i).getCapacity() - list.get(i).getQuantity());
+			} else {
+				dto.setCapacity(list.get(i).getCapacity());
+				dto.setItemName("empty");
+				dto.setNo(list.get(i).getNo());
+				dto.setQuantity(list.get(i).getQuantity());
+				dto.setEmptySpace(list.get(i).getCapacity() - list.get(i).getQuantity());
+			}
+			retList.add(dto);
+		}
+		return retList;
 	}
 
 	public Optional<Shelf> editShelf(ShelfEditDTO dto) {

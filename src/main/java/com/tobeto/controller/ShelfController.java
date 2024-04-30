@@ -33,13 +33,18 @@ public class ShelfController {
 	@Qualifier("responseMapper")
 	private ModelMapper responseMapper;
 
+//	@GetMapping("/get")
+//	public List<ShelfResponseDTO> getShelves() {
+//
+//		List<ShelfResponseDTO> response = shelfService.getShelves().stream()
+//				.map(s -> responseMapper.map(s, ShelfResponseDTO.class)).toList();
+//		return response;
+//	}
+
 	@GetMapping("/get")
 	public List<ShelfResponseDTO> getShelves() {
 
-		List<ShelfResponseDTO> response = shelfService.getShelves().stream()
-				.map(s -> responseMapper.map(s, ShelfResponseDTO.class)).toList();
-
-		return response;
+		return shelfService.getShelvesTest();
 	}
 
 	@PostMapping("/edit")
