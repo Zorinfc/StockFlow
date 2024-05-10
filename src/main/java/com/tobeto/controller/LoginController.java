@@ -34,7 +34,6 @@ public class LoginController {
 		Optional<User> optUser = userService.getUserByEmail(dto.getEmail());
 		if (optUser.isPresent() && encoder.matches(dto.getPassword(), optUser.get().getPassword())) {
 			String token = tokenService.createToken(optUser.get());
-//			System.out.println(token);
 			return ResponseEntity.ok(token);
 		} else {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();

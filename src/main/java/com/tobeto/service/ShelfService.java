@@ -18,16 +18,16 @@ public class ShelfService {
 	@Autowired
 	private ShelfRepository shelfRepository;
 
+	// Shelf kapasitesi
+	private static final int MAXSHELF = 50;
+
+	// Shelf oluşturma
 	public int addShelf(int count) {
+
 		int shelfCount = (int) shelfRepository.count();
-		// private static final
-		int maxShelf = 50;
-		if (maxShelf < shelfCount + count) {
-			// count 40
-			// max 50
-			// scount 20
-			count = maxShelf - shelfCount;
-			// 0 döndüğünde exception olacak (max kapasiteye ulaşıldı gibi)
+
+		if (MAXSHELF < shelfCount + count) {
+			count = MAXSHELF - shelfCount;
 		}
 
 		for (int i = 0; i < count; i++) {
@@ -39,15 +39,13 @@ public class ShelfService {
 		return count;
 	}
 
+	// Kullanılmayan no değerini return eder
 	public Integer eksikSayilariBul() {
 		List<Shelf> liste = shelfRepository.findTop50ByOrderByNoAsc();
 		int check = 0;
 		int count = 0;
 		int rtr = 0;
-//	        // listenin içindeki sayıları kontrol dizisine işaretle
-//	        for (int num : liste) {
-//	            kontrol[num] = true;
-//	        }
+//		listenin içindeki sayıları kontrol dizisine işaretle
 		while (check == 0 && count < liste.size()) {
 			if (liste.get(count).getNo() == count + 1) {
 				count++;
@@ -57,7 +55,6 @@ public class ShelfService {
 				check = 1;
 			}
 		}
-
 		return rtr;
 	}
 
@@ -69,7 +66,10 @@ public class ShelfService {
 		return shelfRepository.findTop50ByOrderByNoAsc();
 	}
 
-	public List<ShelfResponseDTO> getShelvesTest() {
+	// Shelf return ediyoruz ama shelf'te item yoksa null yerine isim olarak "empty"
+	// return ediliyor
+	// map işlemini aslında burada gerçekleştiriyoruz.
+	public List<ShelfResponseDTO> getShelvesMapped() {
 
 		List<Shelf> list = shelfRepository.findTop50ByOrderByNoAsc();
 		List<ShelfResponseDTO> retList = new ArrayList<ShelfResponseDTO>();
@@ -93,20 +93,20 @@ public class ShelfService {
 		return retList;
 	}
 
+	// Shelf edit
 	public Optional<Shelf> editShelf(ShelfEditDTO dto) {
+
 		Optional<Shelf> shelf = shelfRepository.findByNo(dto.getNo());
 		shelf.get().setQuantity(shelf.get().getQuantity() - dto.getQuantity());
-
 		if (shelf.get().getQuantity() == 0) {
 			shelf.get().setItem(null);
 		}
-
 		shelfRepository.save(shelf.get());
 		return shelf;
 	}
 
+	// İçinde item bulunmayan (item == null olan) shelf return eder
 	public Shelf getEmptyShelf() {
-		// İçinde item olmayan shelf return ediyor
 		return getShelves().stream().filter(shelf -> shelf.getItem() == null).findFirst().get();
 	}
 
@@ -124,26 +124,17 @@ public class ShelfService {
 		}
 	}
 
+	// Item id'sine sahip shelf return eder
 	public Optional<Shelf> getShelfWithItem(int id) {
-//		System.out.println("no==>" + id);
-
-		Optional<Shelf> oShelf = shelfRepository.findByItemIdNotNull(id);
-//		List<Shelf> list = new ArrayList<Shelf>();
-//		getShelves().stream().forEach(s -> {
-//			if (s.getItem().getId() == id && s.getItem_quantity() < s.getCapacity()) {
-//				list.add(s);
-//				System.out.println("list add");
-//			} else {
-//				System.out.println("Boş shelf bulunamadı");
-//			}
-//		});
-		return oShelf;
+		List<Shelf> oShelf = shelfRepository.findByItemIdNotNull(id);
+		Optional<Shelf> returnShelf = oShelf.stream().findFirst();
+		return returnShelf;
 	}
-
-	public int getEmptyShelfCount() {
-		List<Shelf> emptyShelf = getShelves().stream().filter(shelf -> shelf.getItem() == null).toList();
-		System.out.println(emptyShelf.size());
-		return emptyShelf.size();
-	}
+//
+//	public int getEmptyShelfCount() {
+//		List<Shelf> emptyShelf = getShelves().stream().filter(shelf -> shelf.getItem() == null).toList();
+//		System.out.println(emptyShelf.size());
+//		return emptyShelf.size();
+//	}
 
 }

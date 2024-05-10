@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.tobeto.dto.shelf.ShelfCreateDTO;
-import com.tobeto.dto.shelf.ShelfDeleteRequestDTO;
+import com.tobeto.dto.shelf.ShelfRequestDTO;
 import com.tobeto.dto.shelf.ShelfEditDTO;
 import com.tobeto.dto.shelf.ShelfResponseDTO;
 import com.tobeto.entity.Shelf;
@@ -43,8 +43,7 @@ public class ShelfController {
 
 	@GetMapping("/get")
 	public List<ShelfResponseDTO> getShelves() {
-
-		return shelfService.getShelvesTest();
+		return shelfService.getShelvesMapped();
 	}
 
 	@PostMapping("/edit")
@@ -59,7 +58,7 @@ public class ShelfController {
 	}
 
 	@PostMapping("/delete")
-	public boolean deleteShelf(@RequestBody ShelfDeleteRequestDTO dto) {
+	public boolean deleteShelf(@RequestBody ShelfRequestDTO dto) {
 		return shelfService.deleteShelf(dto.getNo());
 	}
 

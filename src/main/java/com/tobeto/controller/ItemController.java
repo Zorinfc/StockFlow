@@ -43,7 +43,7 @@ public class ItemController {
 		item.setMin_quantity(dto.getMin_quantity());
 		item.setName(dto.getName());
 		itemService.addItem(item, dto.getQuantity());
-		System.out.println(dto);
+
 		return ResponseEntity.ok(new ResponseMsgDTO(item.getName() + " Added"));
 	}
 
@@ -59,9 +59,9 @@ public class ItemController {
 
 	}
 
-	@PostMapping("/opt")
+	@PostMapping("/inout")
 	public ResponseEntity<ResponseMsgDTO> inOutItem(@RequestBody ItemInOutDTO dto) {
-		itemService.operation(dto);
+		itemService.itemInOut(dto);
 		return ResponseEntity.ok(new ResponseMsgDTO(dto.getName()));
 	}
 

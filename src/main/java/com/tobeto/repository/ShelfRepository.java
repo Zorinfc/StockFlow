@@ -11,7 +11,7 @@ import com.tobeto.entity.Shelf;
 public interface ShelfRepository extends JpaRepository<Shelf, Integer> {
 
 	@Query("SELECT s FROM Shelf s WHERE s.item.id = :itemId and s.quantity < s.capacity")
-	Optional<Shelf> findByItemIdNotNull(int itemId);
+	List<Shelf> findByItemIdNotNull(int itemId);
 
 	@Query("SELECT s FROM Shelf s WHERE s.item.id = :itemId")
 	List<Shelf> findByItemId(int itemId);

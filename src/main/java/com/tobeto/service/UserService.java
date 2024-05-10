@@ -2,7 +2,6 @@ package com.tobeto.service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -28,8 +27,6 @@ public class UserService {
 	private PasswordEncoder encoder;
 
 	// create
-	// duzenlenecek (eklenmek istenene personel var mı gibi)
-	// sifre encode edilecek
 	@Transactional
 	public boolean createUser(UserDTO user) {
 		boolean returnValue = false;
@@ -60,20 +57,21 @@ public class UserService {
 		return returnValue;
 	}
 
+	// Return user list
+
 	public List<User> getUsers() {
 		return userRepository.findAll();
 	}
 
-	public Optional<User> getUserById(UUID id) {
-		return userRepository.findById(id);
-	}
+//	public Optional<User> getUserById(UUID id) {
+//		return userRepository.findById(id);
+//	}
 
 	public Optional<User> getUserByEmail(String email) {
 		return userRepository.findByEmail(email);
 	}
 
-	// admin için
-	// update
+	// update user
 	public User updateUser(UserDTO dto) {
 		Optional<User> optUser = getUserByEmail(dto.getEmail());
 		if (optUser.isPresent()) {

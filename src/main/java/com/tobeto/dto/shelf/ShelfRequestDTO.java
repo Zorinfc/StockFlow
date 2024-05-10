@@ -5,6 +5,6 @@ import lombok.Data;
 @Data
 public class ShelfRequestDTO {
 
-	private int count;
+	private int no;
 
 }
