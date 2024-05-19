@@ -26,6 +26,7 @@ public class User {
 
 	private String name;
 	private String lastName;
+	private boolean active;
 
 	@ManyToOne
 	private Role role;

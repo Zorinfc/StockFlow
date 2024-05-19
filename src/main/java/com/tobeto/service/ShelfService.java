@@ -44,7 +44,7 @@ public class ShelfService {
 		List<Shelf> liste = shelfRepository.findTop50ByOrderByNoAsc();
 		int check = 0;
 		int count = 0;
-		int rtr = 0;
+		int rtr = 1;
 //		listenin içindeki sayıları kontrol dizisine işaretle
 		while (check == 0 && count < liste.size()) {
 			if (liste.get(count).getNo() == count + 1) {

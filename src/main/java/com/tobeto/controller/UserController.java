@@ -23,6 +23,7 @@ import com.tobeto.dto.user.UserPasswordChangeDTO;
 import com.tobeto.dto.user.UserRequestDTO;
 import com.tobeto.dto.user.UserResponseDTO;
 import com.tobeto.entity.User;
+import com.tobeto.repository.UserRepository;
 import com.tobeto.service.UserService;
 
 @RestController
@@ -44,13 +45,21 @@ public class UserController {
 		return userService.createUser(dto);
 	}
 
+	@Autowired
+	private UserRepository repo;
+
+	@PostMapping("/test")
+	public void test(@RequestBody UserRequestDTO dto) {
+		Optional<User> user = userService.getUserByEmail(dto.getEmail());
+		user.get().setActive(true);
+		repo.save(user.get());
+	}
+
 	@GetMapping()
 	public List<UserResponseDTO> getUsers() {
 		List<User> list = userService.getUsers();
 		List<UserResponseDTO> dto = new ArrayList<UserResponseDTO>();
-		list.forEach(u -> {
-			dto.add(responseMapper.map(u, UserResponseDTO.class));
-		});
+		list.stream().filter(User::isActive).forEach(u -> dto.add(responseMapper.map(u, UserResponseDTO.class)));
 		return dto;
 	}
 
@@ -58,13 +67,12 @@ public class UserController {
 	public UpdateResponseDTO getUser(@RequestParam String email) {
 		Optional<User> user = userService.getUserByEmail(email);
 		UpdateResponseDTO response = requestMapper.map(user.get(), UpdateResponseDTO.class);
-//		System.err.println(email);
 		return response;
 	}
 
 	@PostMapping("/delete")
-	public boolean deleteUser(@RequestBody UserRequestDTO dto) {
-		return userService.deleteUser(dto);
+	public boolean deactiveUser(@RequestBody UserRequestDTO dto) {
+		return userService.inactiveUser(dto);
 	}
 
 	@PostMapping("/update")

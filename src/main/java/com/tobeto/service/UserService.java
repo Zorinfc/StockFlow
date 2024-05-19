@@ -39,6 +39,7 @@ public class UserService {
 			tempUser.setName(user.getName());
 			tempUser.setLastName(user.getLastName());
 			tempUser.setRole(role);
+			tempUser.setActive(true);
 			userRepository.save(tempUser);
 			returnValue = true;
 		}
@@ -57,15 +58,21 @@ public class UserService {
 		return returnValue;
 	}
 
+	public boolean inactiveUser(UserRequestDTO user) {
+		boolean retVal = false;
+		Optional<User> oUser = userRepository.findByEmail(user.getEmail());
+		if (oUser.isPresent()) {
+			oUser.get().setActive(false);
+			userRepository.save(oUser.get());
+		}
+		return retVal;
+	}
+
 	// Return user list
 
 	public List<User> getUsers() {
 		return userRepository.findAll();
 	}
-
-//	public Optional<User> getUserById(UUID id) {
-//		return userRepository.findById(id);
-//	}
 
 	public Optional<User> getUserByEmail(String email) {
 		return userRepository.findByEmail(email);

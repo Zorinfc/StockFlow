@@ -9,4 +9,5 @@ public class UserResponseDTO {
 	private String name;
 	private String lastName;
 	private String roleName;
+	private boolean active;
 }
